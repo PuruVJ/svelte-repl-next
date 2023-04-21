@@ -129,7 +129,7 @@ async function follow_redirects(url, uid) {
  * @returns {number}
  */
 function compare_to_version(major, minor, patch) {
-	const v = svelte.VERSION.match(/^(\d+)\.(\d+)\.(\d+)/);
+	const v = self.svelte.VERSION.match(/^(\d+)\.(\d+)\.(\d+)/);
 
 	// @ts-ignore
 	return +v[1] - major || +v[2] - minor || +v[3] - patch;
@@ -337,7 +337,7 @@ async function get_bundle(uid, mode, cache, lookup) {
 			const result =
 				cached_id && cached_id.code === code
 					? cached_id.result
-					: svelte.compile(code, {
+					: self.svelte.compile(code, {
 							generate: mode,
 							format: 'esm',
 							dev: true,
@@ -396,9 +396,10 @@ async function get_bundle(uid, mode, cache, lookup) {
  * @returns
  */
 async function bundle({ uid, files }) {
+	console.log(self.svelte);
 	if (!DEV) {
 		console.clear();
-		console.log(`running Svelte compiler version %c${svelte.VERSION}`, 'font-weight: bold');
+		console.log(`running Svelte compiler version %c${self.svelte.VERSION}`, 'font-weight: bold');
 	}
 
 	/** @type {Map<string, import('$lib/types.js').File>} */

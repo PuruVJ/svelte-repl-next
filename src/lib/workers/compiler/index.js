@@ -42,7 +42,10 @@ const common_options = {
 /** @param {import("../workers").CompileMessageData} param0 */
 function compile({ id, source, options, return_ast }) {
 	try {
-		const { js, css, ast } = svelte.compile(source, Object.assign({}, common_options, options));
+		const { js, css, ast } = self.svelte.compile(
+			source,
+			Object.assign({}, common_options, options)
+		);
 
 		return {
 			id,
