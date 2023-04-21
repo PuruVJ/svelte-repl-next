@@ -37,7 +37,7 @@
 		"tslib": "^2.5.0",
 		"type-fest": "^3.8.0",
 		"typescript": "^5.0.4",
-		"vite": "^4.3.0"
+		"vite": "^4.3.1"
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.5.1",
@@ -48,12 +48,12 @@
 		"@codemirror/lang-markdown": "^6.1.1",
 		"@codemirror/language": "^6.6.0",
 		"@codemirror/state": "^6.2.0",
-		"@codemirror/view": "^6.9.5",
+		"@codemirror/view": "^6.9.6",
 		"@jridgewell/sourcemap-codec": "^1.4.15",
 		"@lezer/highlight": "^1.1.4",
 		"@replit/codemirror-lang-svelte": "^6.0.0",
 		"@rich_harris/svelte-split-pane": "^1.1.0",
-		"@rollup/browser": "^3.20.6",
+		"@rollup/browser": "^3.20.7",
 		"@sveltejs/site-kit": "5.0.4",
 		"acorn": "^8.8.2",
 		"codemirror": "^6.0.1",
