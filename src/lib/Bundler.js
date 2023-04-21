@@ -14,7 +14,7 @@ export default class Bundler {
 
 		if (!workers.has(hash)) {
 			const worker = new Worker();
-			worker.postMessage({ type: 'init', packagesUrl: packages_url, svelteUrl: svelte_url });
+			worker.postMessage({ type: 'init', packages_url, svelte_url });
 			workers.set(hash, worker);
 		}
 
@@ -59,7 +59,7 @@ export default class Bundler {
 			this.worker.postMessage({
 				uid,
 				type: 'bundle',
-				components: files,
+				files,
 			});
 
 			uid += 1;

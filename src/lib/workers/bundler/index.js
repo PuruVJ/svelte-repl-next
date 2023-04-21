@@ -43,7 +43,7 @@ self.addEventListener(
 				try {
 					importScripts(`${svelte_url}/compiler.js`);
 				} catch {
-					await import(/* @vite-ignore */ `${svelte_url}/compiler.js`);
+					svelte = await import(/* @vite-ignore */ `${svelte_url}/compiler.mjs`);
 				}
 
 				fulfil_ready();
@@ -230,7 +230,6 @@ async function get_bundle(uid, mode, cache, lookup) {
 	const repl_plugin = {
 		name: 'svelte-repl',
 		async resolveId(importee, importer) {
-			console.log(importee, importer);
 			if (uid !== current_id) throw ABORT;
 
 			// importing from Svelte
@@ -249,9 +248,9 @@ async function get_bundle(uid, mode, cache, lookup) {
 			}
 
 			// importing from another file in REPL
-			if (importee in lookup && (!importer || importer in lookup)) return importee;
-			if (importee + '.js' in lookup) return importee + '.js';
-			if (importee + '.json' in lookup) return importee + '.json';
+			if (lookup.has(importee) && (!importer || lookup.has(importer))) return importee;
+			if (lookup.has(importee + '.js')) return importee + '.js';
+			if (lookup.has(importee + '.json')) return importee + '.json';
 
 			// remove trailing slash
 			if (importee.endsWith('/')) importee = importee.slice(0, -1);
@@ -338,19 +337,15 @@ async function get_bundle(uid, mode, cache, lookup) {
 			const result =
 				cached_id && cached_id.code === code
 					? cached_id.result
-					: svelte.compile(
-							code,
-
-							{
-								generate: mode,
-								format: 'esm',
-								dev: true,
-								filename: name + '.svelte',
-								...(has_loopGuardTimeout_feature() && {
-									loopGuardTimeout: 100,
-								}),
-							}
-					  );
+					: svelte.compile(code, {
+							generate: mode,
+							format: 'esm',
+							dev: true,
+							filename: name + '.svelte',
+							...(has_loopGuardTimeout_feature() && {
+								loopGuardTimeout: 100,
+							}),
+					  });
 
 			new_cache.set(id, { code, result });
 

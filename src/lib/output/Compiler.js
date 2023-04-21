@@ -15,7 +15,7 @@ export default class Compiler {
 	constructor(svelte_url) {
 		if (!workers.has(svelte_url)) {
 			const worker = new Worker();
-			worker.postMessage({ type: 'init', svelteUrl: svelte_url });
+			worker.postMessage({ type: 'init', svelte_url });
 			workers.set(svelte_url, worker);
 		}
 
@@ -40,25 +40,11 @@ export default class Compiler {
 
 	/**
 	 * @param {import('$lib/types').File} component
-	 * @param {import('$lib/types').CompileOptions} options
+	 * @param {import('svelte/types/compiler').CompileOptions} options
 	 * @param {boolean} return_ast
 	 * @returns
 	 */
 	compile(component, options, return_ast) {
-		console.log({
-			id: uid,
-			type: 'compile',
-			source: component.source,
-			options: Object.assign(
-				{
-					name: component.name,
-					filename: `${component.name}.svelte`,
-				},
-				options
-			),
-			entry: component.name === 'App',
-			return_ast,
-		});
 		return new Promise((fulfil) => {
 			const id = uid++;
 

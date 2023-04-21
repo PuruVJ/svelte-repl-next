@@ -13,13 +13,14 @@ const ready = new Promise((f) => {
 
 self.addEventListener(
 	'message',
-	/** @param {MessageEvent<import("../workers").CompileMessageData>} event */ async (event) => {
+	/** @param {MessageEvent<import("../workers").CompileMessageData>} event */
+	async (event) => {
 		switch (event.data.type) {
 			case 'init':
 				try {
 					importScripts(`${event.data.svelte_url}/compiler.js`);
-				} catch {
-					await import(/* @vite-ignore */ `${event.data.svelte_url}/compiler.js`);
+				} catch (e) {
+					svelte = await import(/* @vite-ignore */ `${event.data.svelte_url}/compiler.mjs`);
 				}
 
 				fulfil_ready();

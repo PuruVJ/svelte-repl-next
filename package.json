@@ -50,6 +50,7 @@
 		"@codemirror/state": "^6.2.0",
 		"@codemirror/view": "^6.9.5",
 		"@jridgewell/sourcemap-codec": "^1.4.15",
+		"@lezer/highlight": "^1.1.4",
 		"@replit/codemirror-lang-svelte": "^6.0.0",
 		"@rich_harris/svelte-split-pane": "^1.1.0",
 		"@rollup/browser": "^3.20.6",

@@ -2,29 +2,31 @@
 	import { spring } from 'svelte/motion';
 	import { SplitPane } from '@rich_harris/svelte-split-pane';
 
+	const UNIT_REGEX = /(\d+)(?:(px|rem|%|em))/i;
+
 	/** @type {string} */
 	export let panel;
 
 	/** @type {Exclude<import('@rich_harris/svelte-split-pane/dist/SplitPane.svelte').SplitPaneProps['max'], undefined>} */
-	export let pos = '50px';
+	export let pos = '90%';
 
-	let previous_pos = Math.min(+pos.replace('px', ''), 70);
+	$: previous_pos = Math.min(+pos.replace(UNIT_REGEX, '$1'), 70);
 
 	/** @type {Exclude<import('@rich_harris/svelte-split-pane/dist/SplitPane.svelte').SplitPaneProps['max'], undefined>} */
-	let max = '0px';
+	let max = '90%';
 
 	// we can't bind to the spring itself, but we
 	// can still use the spring to drive `pos`
-	const driver = spring(+pos.replace('px', ''), {
+	const driver = spring(+pos.replace(UNIT_REGEX, '$1'), {
 		stiffness: 0.2,
 		damping: 0.5,
 	});
 
 	// @ts-ignore
-	$: pos = $driver + 'px';
+	$: pos = $driver + '%';
 
 	const toggle = () => {
-		const numeric_pos = +pos.replace('px', '');
+		const numeric_pos = +pos.replace(UNIT_REGEX, '$1');
 
 		driver.set(numeric_pos, { hard: true });
 
@@ -32,12 +34,12 @@
 			driver.set(previous_pos);
 		} else {
 			previous_pos = numeric_pos;
-			driver.set(+max.replace('px', ''));
+			driver.set(+max.replace(UNIT_REGEX, '$1'));
 		}
 	};
 </script>
 
-<SplitPane bind:max type="vertical" bind:pos on:change={(e) => console.log(e.detail)}>
+<SplitPane {max} min="10%" type="vertical" bind:pos priority="max">
 	<section slot="a">
 		<slot name="main" />
 	</section>

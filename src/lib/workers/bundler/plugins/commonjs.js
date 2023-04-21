@@ -1,4 +1,4 @@
-import acorn from 'acorn';
+import { parse } from 'acorn';
 import { walk } from 'estree-walker';
 
 const require = `function require(id) {
@@ -14,7 +14,7 @@ export default {
 		if (!/\b(require|module|exports)\b/.test(code)) return;
 
 		try {
-			const ast = acorn.parse(code, {
+			const ast = parse(code, {
 				// for some reason this hangs for some code if you use 'latest'. change with caution
 				ecmaVersion: 'latest',
 			});

@@ -69,6 +69,7 @@ export function handle_change(event) {
 	const $selected_index = get(selected_index);
 	const $output = get(output);
 	const $files = get(files);
+	const $compile_options = get(compile_options);
 
 	files.update(() => {
 		const file = Object.assign({}, $files[get(selected_index)]);
@@ -82,7 +83,7 @@ export function handle_change(event) {
 	});
 
 	// recompile selected component
-	$output?.update?.($files[$selected_index], compile_options);
+	$output?.update?.($files[$selected_index], $compile_options);
 
 	rebundle();
 }

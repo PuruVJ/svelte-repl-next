@@ -1,8 +1,11 @@
 <script>
 	import { SplitPane } from '@rich_harris/svelte-split-pane';
+	import { BROWSER } from 'esm-env';
 	import { createEventDispatcher, tick } from 'svelte';
+	import Bundler from './Bundler';
 	import ComponentSelector from './input/ComponentSelector.svelte';
 	import ModuleEditor from './input/ModuleEditor.svelte';
+	import Output from './output/Output.svelte';
 	import {
 		bundle,
 		bundler,
@@ -16,9 +19,6 @@
 		selected_index,
 		toggleable,
 	} from './state';
-	import Output from './output/Output.svelte';
-	import { BROWSER } from 'esm-env';
-	import Bundler from './Bundler';
 
 	export let packagesUrl = 'https://unpkg.com';
 	export let svelteUrl = `${packagesUrl}/svelte`;
@@ -104,7 +104,7 @@
 	const dispatch = createEventDispatcher();
 
 	$: if ($output && $selected) {
-		$output.update($selected, $compile_options);
+		$output?.update($selected, $compile_options);
 	}
 
 	$: mobile = width < 540;

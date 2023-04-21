@@ -8,6 +8,8 @@
 	import { basicSetup } from 'codemirror';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { writable } from 'svelte/store';
+	import Message from './Message.svelte';
+	import { svelte } from './theme';
 
 	/** @type {import('./types').StartOrEnd | null} */
 	export let errorLoc = null;
@@ -47,6 +49,7 @@
 			updating_externally = true;
 
 			const { scrollLeft: left, scrollTop: top } = editor.scrollDOM;
+
 			change_code((code = options.code));
 
 			updating_externally = false;
@@ -252,10 +255,10 @@
 	 * @param {string} new_value
 	 */
 	function change_code(new_value) {
-		console.log({ new_value });
-		editor.dispatch({
+		const transaction = editor.state.update({
 			changes: { from: 0, to: editor.state.doc.length, insert: new_value },
 		});
+		editor.dispatch(transaction);
 	}
 
 	const cursorPosUpdater = EditorView.updateListener.of((viewUpdate) => {
@@ -288,6 +291,7 @@
 			bracketMatching(),
 			codeFolding(),
 			history(),
+			svelte,
 		];
 
 		extensions.push(EditorState.readOnly.of(readonly));
@@ -321,7 +325,7 @@
 		<pre style="position: absolute; left: 0; top: 0">{code}</pre>
 
 		<div style="position: absolute; width: 100%; bottom: 0">
-			<!-- <Message kind="info">loading editor...</Message> -->
+			<Message kind="info">loading editor...</Message>
 		</div>
 	{/if}
 </div>
@@ -336,7 +340,7 @@
 		overflow: hidden;
 	}
 
-	.codemirror-container :global(.CodeMirror) {
+	.codemirror-container :global(.cm-editor) {
 		height: 100%;
 		font: 400 var(--sk-text-xs) / 1.7 var(--sk-font-mono);
 	}

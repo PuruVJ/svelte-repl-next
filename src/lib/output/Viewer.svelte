@@ -25,6 +25,8 @@
 	export let injectedJS = '';
 	export let injectedCSS = '';
 
+	$: console.log(status);
+
 	/** @type {HTMLIFrameElement} */
 	let iframe;
 	let pending_imports = 0;
@@ -217,7 +219,7 @@
 </script>
 
 <div class="iframe-container">
-	<PaneWithPanel pos="100px" panel="Console">
+	<PaneWithPanel pos="90%" panel="Console">
 		<div slot="main">
 			<iframe
 				title="Result"
@@ -240,7 +242,9 @@
 
 		<div slot="panel-header">
 			<button on:click|stopPropagation={clear_logs}>
-				{#if logs.length > 0}({logs.length}){/if}
+				{#if logs.length > 0}
+					({logs.length})
+				{/if}
 				Clear
 			</button>
 		</div>

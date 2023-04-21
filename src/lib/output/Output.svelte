@@ -14,6 +14,8 @@
 	/** @type {string | null} */
 	export let status;
 
+	$: console.log({ status });
+
 	/** @type {import('$lib/types').StartOrEnd | null} */
 	export let sourceErrorLoc = null;
 
@@ -65,7 +67,6 @@
 	 * @param {import('svelte/types/compiler').CompileOptions} options
 	 */
 	export async function update(selected, options) {
-		console.log(1);
 		if (selected.type === 'js' || selected.type === 'json') return;
 
 		if (selected.type === 'md') {
@@ -75,10 +76,7 @@
 
 		if (!compiler) return console.error('Compiler not initialized.');
 
-		debugger;
 		const compiled = await compiler.compile(selected, options, showAst);
-
-		if (!js_editor) return; // unmounted
 
 		js_editor.update({ code: compiled.js });
 		css_editor.update({ code: compiled.css });
@@ -125,7 +123,7 @@
 	{#if embedded}
 		<CodeMirror bind:this={js_editor} errorLoc={sourceErrorLoc} readonly />
 	{:else}
-		<PaneWithPanel pos="67px" panel="Compiler options">
+		<PaneWithPanel pos="50%" panel="Compiler options">
 			<div slot="main">
 				<CodeMirror bind:this={js_editor} errorLoc={sourceErrorLoc} readonly />
 			</div>
