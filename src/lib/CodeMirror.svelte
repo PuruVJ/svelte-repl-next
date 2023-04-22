@@ -262,7 +262,7 @@
 			cursorPosUpdater,
 			onFileChangeUpdater,
 			await get_lang_plugin(mode || 'svelte'),
-			autocompletion(),
+			autocompletion({ closeOnBlur: false }),
 			EditorState.tabSize.of(2),
 			keymap.of([...defaultKeymap, indentWithTab]),
 			indentUnit.of(tab ? '\t' : '  '),

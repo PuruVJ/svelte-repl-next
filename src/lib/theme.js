@@ -64,9 +64,10 @@ export const svelteTheme = EditorView.theme(
 			borderBottomColor: 'var(--sk-back-3)',
 		},
 		'.cm-tooltip-autocomplete': {
+			color: 'var(--sk-text-2) !important',
 			'& > ul > li[aria-selected]': {
-				backgroundColor: 'var(--sk-back-3)',
-				// color: ivory,
+				backgroundColor: 'var(--sk-back-4)',
+				color: 'var(--sk-text-1) !important',
 			},
 		},
 	},
