@@ -60,6 +60,13 @@
 			editor.scrollDOM.scrollLeft = left;
 		}
 	}
+	/**
+	 * @param {number} pos
+	 */
+	export function setCursor(pos) {
+		console.log(1);
+		editor?.dispatch({ selection: { anchor: pos, head: pos } });
+	}
 
 	/** @type {(...val: any) => void} */
 	let fulfil_module_editor_ready;
@@ -95,46 +102,6 @@
 		editor?.setState(EditorState.create({ extensions, doc: '' }));
 		editor?.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: '' } });
 	}
-
-	// /** @returns {import('./types').History} */
-	// export function getHistory() {
-	// 	return editor?.state.toJSON({ history: historyField }).history;
-	// }
-
-	// /**
-	//  * @param {import('./types').History} history
-	//  */
-	// export function setHistory(history) {
-	// 	if (!editor) return;
-
-	// 	// Set editor's history to `history` parameter
-	// 	const new_state = EditorState.fromJSON(
-	// 		{
-	// 			...editor.state.toJSON({ history: historyField }),
-	// 			history,
-	// 		},
-	// 		editor.state,
-	// 		{ history: historyField }
-	// 	);
-
-	// 	editor.setState(new_state);
-	// }
-
-	// export function clearHistory() {
-	// 	if (!editor) return;
-
-	// 	// Set editor's history to `history` parameter
-	// 	const new_state = EditorState.fromJSON(
-	// 		{
-	// 			...editor.state.toJSON({ history: historyField }),
-	// 			history: {},
-	// 		},
-	// 		editor.state,
-	// 		{ history: historyField }
-	// 	);
-
-	// 	editor.setState(new_state);
-	// }
 
 	/** @type {StateEffectType<Range<Decoration>[]>} */
 	const addMarksDecoration = StateEffect.define();

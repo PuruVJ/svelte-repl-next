@@ -10,10 +10,6 @@ import replace from './plugins/replace.js';
 
 self.window = self; // egregious hack to get magic-string to work in a worker
 
-// This is just for type-safety
-/** @type {import('svelte/compiler')} */
-var svelte;
-
 /** @type {string} */
 var pkg_name;
 
@@ -61,6 +57,8 @@ self.addEventListener(
 					if (current_id !== uid) return;
 
 					const result = await bundle({ uid, files });
+
+					console.log(result);
 
 					if (JSON.stringify(result.error) === JSON.stringify(ABORT)) return;
 					if (result && uid === current_id) postMessage(result);
@@ -347,9 +345,13 @@ async function get_bundle(uid, mode, cache, lookup) {
 							}),
 					  });
 
+			console.log({ warnings });
+
 			new_cache.set(id, { code, result });
 
 			(result.warnings || result.stats.warnings)?.forEach((warning) => {
+				// This is required, otherwise postMessage won't work
+				delete warning.toString;
 				// TODO remove stats post-launch
 				warnings.push(warning);
 			});

@@ -109,11 +109,9 @@ export async function go_to_warning_pos(item) {
 	const [, name, type] = match;
 	const file_index = $files.findIndex((file) => file.name === name && file.type === type);
 
-	if (!file_index) return;
+	if (file_index === -1) return;
 
-	handle_select(file_index);
-
-	await Promise.resolve();
+	await handle_select(file_index);
 
 	$module_editor?.focus();
 	$module_editor?.setCursor(item.start.character);
