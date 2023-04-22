@@ -9,6 +9,13 @@
 	} from '$lib/state';
 	import { createEventDispatcher, tick } from 'svelte';
 
+	let count = 0;
+	files.subscribe((files) => {
+		count++;
+	});
+
+	$: console.log(count, $files);
+
 	/** @type {boolean}  */
 	export let show_modified;
 
@@ -25,7 +32,7 @@
 	function select_file(index) {
 		if ($selected_index !== index) {
 			editing_index = -1;
-			handle_select(editing_index);
+			handle_select(index);
 		}
 	}
 
@@ -36,7 +43,7 @@
 		}
 	}
 
-	async function closeEdit() {
+	async function close_edit() {
 		const match = /(.+)\.(svelte|js|json|md)$/.exec($selected?.name ?? '');
 
 		const edited_file = $files[editing_index];
@@ -87,7 +94,7 @@
 		} else {
 			console.error(`Could not find component! That's... odd`);
 		}
-
+		debugger;
 		handle_select($files[index] ? index : index - 1);
 	}
 
@@ -110,7 +117,13 @@
 
 		$files = $files.concat(file);
 
-		editing_index = ++$selected_index;
+		$selected_index++;
+
+		console.log(1, $selected, $files);
+		editing_index = $selected_index;
+		console.log(2, $selected, $files);
+
+		console.log('add_new', $selected_index, $files);
 
 		handle_select(editing_index);
 
@@ -201,7 +214,7 @@
 							spellcheck={false}
 							bind:value={$files[editing_index].name}
 							on:focus={select_input}
-							on:blur={closeEdit}
+							on:blur={close_edit}
 							on:keydown={(e) =>
 								e.key === 'Enter' &&
 								!is_file_name_used($files[editing_index]) &&

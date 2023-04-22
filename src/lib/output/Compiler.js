@@ -39,12 +39,12 @@ export default class Compiler {
 	}
 
 	/**
-	 * @param {import('$lib/types').File} component
+	 * @param {import('$lib/types').File} file
 	 * @param {import('svelte/types/compiler').CompileOptions} options
 	 * @param {boolean} return_ast
 	 * @returns
 	 */
-	compile(component, options, return_ast) {
+	compile(file, options, return_ast) {
 		return new Promise((fulfil) => {
 			const id = uid++;
 
@@ -53,15 +53,15 @@ export default class Compiler {
 			this.worker.postMessage({
 				id,
 				type: 'compile',
-				source: component.source,
+				source: file.source,
 				options: Object.assign(
 					{
-						name: component.name,
-						filename: `${component.name}.svelte`,
+						name: file.name,
+						filename: `${file.name}.svelte`,
 					},
 					options
 				),
-				entry: component.name === 'App',
+				entry: file.name === 'App',
 				return_ast,
 			});
 		});

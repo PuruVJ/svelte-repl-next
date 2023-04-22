@@ -1,3 +1,4 @@
+import { tick } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 
 /**
@@ -34,45 +35,50 @@ export async function rebundle() {
 /**
  * @param {number} index
  */
-export function handle_select(index) {
-	const $files = get(files);
-	const $selected_index = get(selected_index);
+export async function handle_select(index) {
 	const $module_editor = get(module_editor);
 	const $compile_options = get(compile_options);
 	const $output = get(output);
+	const $selected = get(selected);
 
-	const file = $files[$selected_index];
+	if (!$selected) return;
 
-	if (!file) return;
+	EDITOR_STATE_MAP.set(get_full_filename($selected), $module_editor?.getEditorState());
 
-	EDITOR_STATE_MAP.set(
-		get_full_filename($files[$selected_index]),
-		$module_editor?.getEditorState()
-	);
 	selected_index.set(index);
 
-	$module_editor?.set({ code: file.source, lang: file.type });
+	const $new_selected = get(selected);
 
-	if (EDITOR_STATE_MAP.has(get_full_filename(file))) {
-		$module_editor?.setEditorState(EDITOR_STATE_MAP.get(get_full_filename(file)));
+	if (!$new_selected) return;
+
+	console.time('set');
+	await $module_editor?.set({ code: $new_selected.source, lang: $new_selected.type });
+	console.timeEnd('set');
+
+	await tick();
+
+	if (EDITOR_STATE_MAP.has(get_full_filename($new_selected))) {
+		$module_editor?.set({ code: $new_selected.source, lang: $new_selected.type });
+		$module_editor?.setEditorState(EDITOR_STATE_MAP.get(get_full_filename($new_selected)));
 	} else {
 		$module_editor?.clearEditorState();
 	}
 
-	$output?.set?.(index, $compile_options);
+	$output?.set($new_selected, $compile_options);
 }
 
 /**
  * @param {CustomEvent<{ value: string }>} event
  */
-export function handle_change(event) {
+export async function handle_change(event) {
 	const $selected_index = get(selected_index);
 	const $output = get(output);
 	const $files = get(files);
 	const $compile_options = get(compile_options);
+	const $selected = get(selected);
 
 	files.update(() => {
-		const file = Object.assign({}, $files[get(selected_index)]);
+		const file = Object.assign({}, $selected);
 
 		file.source = event.detail.value;
 		file.modified = true;
@@ -82,8 +88,10 @@ export function handle_change(event) {
 		return $files;
 	});
 
+	await tick();
+
 	// recompile selected component
-	$output?.update?.($files[$selected_index], $compile_options);
+	$output?.update(get(selected), $compile_options);
 
 	rebundle();
 }

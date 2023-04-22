@@ -69,6 +69,9 @@ dependencies:
     version: 1.0.0
 
 devDependencies:
+  '@fontsource/fira-mono':
+    specifier: ^4.5.10
+    version: 4.5.10
   '@playwright/test':
     specifier: ^1.32.3
     version: 1.32.3
@@ -401,6 +404,10 @@ packages:
     os: [win32]
     requiresBuild: true
     optional: true
+
+  /@fontsource/fira-mono@4.5.10:
+    resolution: {integrity: sha512-bxUnRP8xptGRo8YXeY073DSpfK74XpSb0ZyRNpHV9WvLnJ7TwPOjZll8hTMin7zLC6iOp59pDZ8EQDj1gzgAQQ==}
+    dev: true
 
   /@jridgewell/resolve-uri@3.1.0:
     resolution: {integrity: sha512-F2msla3tad+Mfht5cJq7LSXcdudKTWCVYUgw6pLFOOHSTtZlj6SWNYAp+AhuqLmWdBO2X5hPrLcu8cVP8fy28w==}

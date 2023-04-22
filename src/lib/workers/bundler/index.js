@@ -43,7 +43,7 @@ self.addEventListener(
 				try {
 					importScripts(`${svelte_url}/compiler.js`);
 				} catch {
-					svelte = await import(/* @vite-ignore */ `${svelte_url}/compiler.mjs`);
+					self.svelte = await import(/* @vite-ignore */ `${svelte_url}/compiler.mjs`);
 				}
 
 				fulfil_ready();
@@ -396,7 +396,6 @@ async function get_bundle(uid, mode, cache, lookup) {
  * @returns
  */
 async function bundle({ uid, files }) {
-	console.log(self.svelte);
 	if (!DEV) {
 		console.clear();
 		console.log(`running Svelte compiler version %c${self.svelte.VERSION}`, 'font-weight: bold');

@@ -15,7 +15,7 @@ export const svelteTheme = EditorView.theme(
 
 		'.cm-cursor, .cm-dropCursor': { borderLeftColor: 'var(--sk-theme-3)' },
 		'&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection':
-			{ backgroundColor: 'var(--sk-selection)' },
+			{ backgroundColor: 'var(--sk-selection-color)' },
 
 		'.cm-panels': { backgroundColor: 'var(--sk-back-2)', color: 'var(--sk-text-2)' },
 		'.cm-panels.cm-panels-top': { borderBottom: '2px solid black' },
@@ -78,9 +78,9 @@ export const svelteHighlightStyle = HighlightStyle.define([
 	{ tag: t.keyword, color: 'var(--sk-code-keyword)' },
 	{
 		tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName],
-		color: 'var(--sk-code-keyword)',
+		color: 'var(--sk-code-base)',
 	},
-	{ tag: [t.function(t.variableName), t.labelName], color: 'var(--sk-code-keyword)' },
+	{ tag: [t.function(t.variableName), t.labelName], color: 'var(--sk-code-tags)' },
 	{ tag: [t.color, t.constant(t.name), t.standard(t.name)], color: 'var(--sk-code-base)' },
 	{ tag: [t.definition(t.name), t.separator], color: 'var(--sk-code-base)' },
 	{
@@ -106,8 +106,8 @@ export const svelteHighlightStyle = HighlightStyle.define([
 	{ tag: t.strikethrough, textDecoration: 'line-through' },
 	{ tag: t.link, color: 'var(--sk-code-base)', textDecoration: 'underline' },
 	{ tag: t.heading, fontWeight: 'bold', color: 'var(--sk-text-1)' },
-	{ tag: [t.atom, t.bool, t.special(t.variableName)], color: 'var(--sk-code-atom)' },
-	{ tag: [t.processingInstruction, t.string, t.inserted], color: 'var(--sk-code-base)' },
+	{ tag: [t.atom, t.bool], color: 'var(--sk-code-atom)' },
+	{ tag: [t.processingInstruction, t.string, t.inserted], color: 'var(--sk-code-string)' },
 	{ tag: t.invalid, color: '#ff008c' },
 ]);
 

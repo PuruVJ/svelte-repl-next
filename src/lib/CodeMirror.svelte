@@ -1,12 +1,12 @@
 <script>
 	// @ts-check
 	import { autocompletion, closeBrackets } from '@codemirror/autocomplete';
-	import { defaultKeymap, history, indentWithTab } from '@codemirror/commands';
+	import { defaultKeymap, history, historyField, indentWithTab } from '@codemirror/commands';
 	import { bracketMatching, codeFolding, indentUnit } from '@codemirror/language';
 	import { EditorState, Range, StateEffect, StateEffectType, StateField } from '@codemirror/state';
 	import { Decoration, EditorView, keymap } from '@codemirror/view';
 	import { basicSetup } from 'codemirror';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import Message from './Message.svelte';
 	import { svelte } from './theme';
@@ -30,15 +30,17 @@
 	/**
 	 * @param {{ code: string; lang: import('./types').Lang }} options
 	 */
-	export function set(options) {
+	export async function set(options) {
 		update(options);
 	}
 
 	/**
 	 * @param {{ code?: string; lang?: import('./types').Lang }} options
 	 */
-	export function update(options) {
+	export async function update(options) {
 		if (!editor) return;
+
+		await tick();
 
 		if (options.lang && options.lang !== lang) {
 			// This will trigger change_mode
@@ -59,6 +61,10 @@
 		}
 	}
 
+	/** @type {(...val: any) => void} */
+	let fulfil_module_editor_ready;
+	export const isReady = new Promise((f) => (fulfil_module_editor_ready = f));
+
 	export function resize() {
 		editor?.requestMeasure();
 	}
@@ -68,20 +74,26 @@
 	}
 
 	export function getEditorState() {
-		return editor?.state;
+		return editor?.state.toJSON({ history: historyField });
 	}
 
 	/**
-	 * @param {EditorState} state
+	 * @param {any} state
 	 */
 	export function setEditorState(state) {
 		if (!editor) return;
 
-		editor.setState(state);
+		editor.setState(
+			EditorState.fromJSON(state, { extensions, doc: state.doc }, { history: historyField })
+		);
+		editor?.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: state.doc } });
 	}
 
-	export function clearEditorState() {
-		editor?.setState(EditorState.create({ extensions: [basicSetup] }));
+	export async function clearEditorState() {
+		await tick();
+
+		editor?.setState(EditorState.create({ extensions, doc: '' }));
+		editor?.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: '' } });
 	}
 
 	// /** @returns {import('./types').History} */
@@ -311,11 +323,13 @@
 		});
 	}
 
-	onMount(() => {
-		create_editor();
+	onMount(async () => {
+		await create_editor();
+
+		fulfil_module_editor_ready();
 
 		return () => {
-			editor.destroy();
+			editor?.destroy();
 		};
 	});
 </script>
@@ -342,7 +356,10 @@
 
 	.codemirror-container :global(.cm-editor) {
 		height: 100%;
-		font: 400 var(--sk-text-xs) / 1.7 var(--sk-font-mono);
+	}
+
+	.codemirror-container :global(*) {
+		font: 400 var(--sk-text-xs) / 1.7 var(--sk-font-mono) !important;
 	}
 
 	.codemirror-container :global(.error-loc) {

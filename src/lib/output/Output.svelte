@@ -14,8 +14,6 @@
 	/** @type {string | null} */
 	export let status;
 
-	$: console.log({ status });
-
 	/** @type {import('$lib/types').StartOrEnd | null} */
 	export let sourceErrorLoc = null;
 
@@ -78,8 +76,8 @@
 
 		const compiled = await compiler.compile(selected, options, showAst);
 
-		js_editor.update({ code: compiled.js });
-		css_editor.update({ code: compiled.css });
+		js_editor.update({ code: compiled.js, lang: 'js' });
+		css_editor.update({ code: compiled.css, lang: 'css' });
 		ast = compiled.ast;
 	}
 

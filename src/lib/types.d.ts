@@ -1,7 +1,7 @@
 import { OutputChunk } from '@rollup/browser';
 import { CompileOptions } from 'svelte/types/compiler';
 
-export type Lang = 'js' | 'svelte' | 'json' | 'md' | (string & Record<never, never>);
+export type Lang = 'js' | 'svelte' | 'json' | 'md' | 'css' | (string & Record<never, never>);
 
 type StartOrEnd = {
 	line: number;

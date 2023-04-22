@@ -1,7 +1,7 @@
 <script>
 	import { SplitPane } from '@rich_harris/svelte-split-pane';
 	import { BROWSER } from 'esm-env';
-	import { createEventDispatcher, tick } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import Bundler from './Bundler';
 	import ComponentSelector from './input/ComponentSelector.svelte';
 	import ModuleEditor from './input/ModuleEditor.svelte';
@@ -9,9 +9,9 @@
 	import {
 		bundle,
 		bundler,
-		clear_state,
 		compile_options,
 		files,
+		handle_select,
 		module_editor,
 		output,
 		rebundle,
@@ -51,17 +51,11 @@
 		rebundle();
 
 		// Wait for editors to be ready
-		await tick(); // This is just a guess that it will make the editors be ready
+		await $module_editor?.isReady;
 
 		injectedCSS = data.css || '';
 
-		$module_editor?.set({
-			code: $selected?.source ?? '',
-			lang: $selected?.type ?? 'svelte',
-		});
-
-		if ($selected) $output?.set?.($selected, $compile_options);
-		clear_state();
+		handle_select(0);
 	}
 
 	export function markSaved() {
@@ -157,6 +151,7 @@
 <div class="container" class:toggleable={$toggleable} bind:clientWidth={width}>
 	<div class="viewport" class:output={show_output}>
 		<SplitPane
+			--color="var(--sk-text-4)"
 			id="main"
 			type={orientation === 'rows' ? 'vertical' : 'horizontal'}
 			pos="{mobile || fixed ? fixedPos : orientation === 'rows' ? 60 : 50}%"

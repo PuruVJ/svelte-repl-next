@@ -1,26 +1,30 @@
 <script>
 	import Repl from '$lib/Repl.svelte';
 	import '@sveltejs/site-kit/styles/index.css';
+	import '@fontsource/fira-mono';
+	import { onMount } from 'svelte';
 
 	/** @type {Repl} */
 	let repl;
 
-	$: repl?.set({
-		files: [
-			{
-				name: 'App',
-				type: 'svelte',
-				source:
-					`<scr` +
-					`ipt>
+	onMount(() =>
+		repl?.set({
+			files: [
+				{
+					name: 'App',
+					type: 'svelte',
+					source:
+						`<scr` +
+						`ipt>
 	let name = 'world';
 </scr` +
-					`ipt>
+						`ipt>
 
 <h1>Hello {name}!</h1>`,
-			},
-		],
-	});
+				},
+			],
+		})
+	);
 </script>
 
 <main>

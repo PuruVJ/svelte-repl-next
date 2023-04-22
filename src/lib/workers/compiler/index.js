@@ -20,7 +20,7 @@ self.addEventListener(
 				try {
 					importScripts(`${event.data.svelte_url}/compiler.js`);
 				} catch (e) {
-					svelte = await import(/* @vite-ignore */ `${event.data.svelte_url}/compiler.mjs`);
+					self.svelte = await import(/* @vite-ignore */ `${event.data.svelte_url}/compiler.mjs`);
 				}
 
 				fulfil_ready();
