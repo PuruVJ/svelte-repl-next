@@ -17,10 +17,10 @@ const DEFAULT_COMPILE_OPTIONS = {
 };
 
 /** @type {Map<string, import('@codemirror/state').EditorState>} */
-const EDITOR_STATE_MAP = new Map();
+export const EDITOR_STATE_MAP = new Map();
 
 /** @param {import('./types').File} file */
-function get_full_filename(file) {
+export function get_full_filename(file) {
 	return `${file.name}.${file.type}`;
 }
 
@@ -32,10 +32,15 @@ export async function rebundle() {
 	if (result && token === current_token) bundle.set(result);
 }
 
+/** @type {boolean}  */
+let is_select_changing;
+
 /**
  * @param {number} index
  */
 export async function handle_select(index) {
+	is_select_changing = true;
+
 	const $module_editor = get(module_editor);
 	const $compile_options = get(compile_options);
 	const $output = get(output);
@@ -43,46 +48,47 @@ export async function handle_select(index) {
 
 	if (!$selected) return;
 
-	EDITOR_STATE_MAP.set(get_full_filename($selected), $module_editor?.getEditorState());
-
 	selected_index.set(index);
+
+	await tick();
+
+	EDITOR_STATE_MAP.set(get_full_filename($selected), $module_editor?.getEditorState());
 
 	const $new_selected = get(selected);
 
 	if (!$new_selected) return;
 
-	console.time('set');
 	await $module_editor?.set({ code: $new_selected.source, lang: $new_selected.type });
-	console.timeEnd('set');
-
-	await tick();
 
 	if (EDITOR_STATE_MAP.has(get_full_filename($new_selected))) {
-		$module_editor?.set({ code: $new_selected.source, lang: $new_selected.type });
 		$module_editor?.setEditorState(EDITOR_STATE_MAP.get(get_full_filename($new_selected)));
 	} else {
 		$module_editor?.clearEditorState();
 	}
 
 	$output?.set($new_selected, $compile_options);
+
+	is_select_changing = false;
 }
 
 /**
  * @param {CustomEvent<{ value: string }>} event
  */
 export async function handle_change(event) {
+	if (is_select_changing) return;
+
 	const $selected_index = get(selected_index);
 	const $output = get(output);
-	const $files = get(files);
 	const $compile_options = get(compile_options);
 	const $selected = get(selected);
 
-	files.update(() => {
-		const file = Object.assign({}, $selected);
+	files.update(($files) => {
+		const file = { ...$selected };
 
 		file.source = event.detail.value;
 		file.modified = true;
 
+		// @ts-ignore
 		$files[$selected_index] = file;
 
 		return $files;

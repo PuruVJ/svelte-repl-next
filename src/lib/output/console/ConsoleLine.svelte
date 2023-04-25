@@ -11,7 +11,7 @@
 	}
 </script>
 
-{#if log.level === 'table'}
+{#if log.args && log.level === 'table'}
 	<ConsoleTable data={log.args[0]} columns={log.args[1]} />
 {/if}
 
@@ -48,13 +48,13 @@
 		<div class="arrow" class:expand={!log.collapsed}>▶</div>
 		<span class="title">{log.label}</span>
 	{:else if log.level.startsWith('system')}
-		{#each log.args as arg}
+		{#each log.args ?? [] as arg}
 			{arg}
 		{/each}
-	{:else if log.level === 'table'}
+	{:else if log.args && log.level === 'table'}
 		<JSONNode value={log.args[0]} />
 	{:else}
-		{#each log.args as arg}
+		{#each log.args ?? [] as arg}
 			<JSONNode value={arg} />
 		{/each}
 	{/if}
@@ -79,7 +79,7 @@
 
 <style>
 	.log {
-		border-bottom: 1px solid #eee;
+		border-bottom: 0.5px solid var(--sk-back-4);
 		padding: 5px 10px 0px;
 		display: flex;
 		position: relative;
@@ -94,7 +94,7 @@
 
 	.console-warn,
 	.console-system-warn {
-		background: #fffbe6;
+		background: hsla(50, 100%, 95%, 0.4);
 		border-color: #fff4c4;
 	}
 

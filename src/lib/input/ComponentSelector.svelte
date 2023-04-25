@@ -9,13 +9,6 @@
 	} from '$lib/state';
 	import { createEventDispatcher, tick } from 'svelte';
 
-	let count = 0;
-	files.subscribe((files) => {
-		count++;
-	});
-
-	$: console.log(count, $files);
-
 	/** @type {boolean}  */
 	export let show_modified;
 
@@ -26,7 +19,7 @@
 	const dispatch = createEventDispatcher();
 
 	/** @type {number} */
-	let editing_index = 0;
+	let editing_index = -1;
 
 	/** @param {number} index */
 	function select_file(index) {
@@ -87,14 +80,13 @@
 
 		if (!result) return;
 
-		if (~index) {
+		if (index !== -1) {
 			$files = $files.slice(0, index).concat($files.slice(index + 1));
 
 			dispatch('remove', { files: $files });
 		} else {
 			console.error(`Could not find component! That's... odd`);
 		}
-		debugger;
 		handle_select($files[index] ? index : index - 1);
 	}
 
@@ -117,13 +109,7 @@
 
 		$files = $files.concat(file);
 
-		$selected_index++;
-
-		console.log(1, $selected, $files);
-		editing_index = $selected_index;
-		console.log(2, $selected, $files);
-
-		console.log('add_new', $selected_index, $files);
+		editing_index = $files.length - 1;
 
 		handle_select(editing_index);
 
@@ -178,7 +164,7 @@
 <div class="component-selector">
 	{#if $files.length}
 		<div class="file-tabs" on:dblclick={add_new}>
-			{#each $files as file, index}
+			{#each $files as file, index (file)}
 				<div
 					id={file.name}
 					class="button"

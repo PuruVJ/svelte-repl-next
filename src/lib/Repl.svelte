@@ -7,10 +7,12 @@
 	import ModuleEditor from './input/ModuleEditor.svelte';
 	import Output from './output/Output.svelte';
 	import {
+		EDITOR_STATE_MAP,
 		bundle,
 		bundler,
 		compile_options,
 		files,
+		get_full_filename,
 		handle_select,
 		module_editor,
 		output,
@@ -53,9 +55,11 @@
 		// Wait for editors to be ready
 		await $module_editor?.isReady;
 
+		await $module_editor?.set({ code: data.files[0].source, lang: data.files[0].type });
+
 		injectedCSS = data.css || '';
 
-		handle_select(0);
+		EDITOR_STATE_MAP.set(get_full_filename(data.files[0]), $module_editor?.getEditorState());
 	}
 
 	export function markSaved() {
@@ -144,9 +148,19 @@
 	$: if (output && $selected) {
 		$output?.update($selected, $compile_options);
 	}
+
+	/**
+	 * @param {BeforeUnloadEvent} event
+	 */
+	function before_unload(event) {
+		if (showModified && $files.find((file) => file.modified)) {
+			event.preventDefault();
+			event.returnValue = '';
+		}
+	}
 </script>
 
-<!-- <svelte:window on:beforeunload={beforeUnload} /> -->
+<svelte:window on:beforeunload={before_unload} />
 
 <div class="container" class:toggleable={$toggleable} bind:clientWidth={width}>
 	<div class="viewport" class:output={show_output}>

@@ -64,7 +64,6 @@
 	 * @param {number} pos
 	 */
 	export function setCursor(pos) {
-		console.log(1);
 		editor?.dispatch({ selection: { anchor: pos, head: pos } });
 	}
 
@@ -150,6 +149,9 @@
 			effects: StateEffect.reconfigure.of(extensions),
 		});
 	}
+
+	// TODO: This hack exists cuz the onChange event fires on any random thing
+	let prev_editor_value = '';
 
 	/** @type {HTMLDivElement} */
 	let container;
@@ -240,14 +242,12 @@
 		editor.dispatch(transaction);
 	}
 
-	const cursorPosUpdater = EditorView.updateListener.of((viewUpdate) => {
+	const watcher = EditorView.updateListener.of((viewUpdate) => {
 		if (viewUpdate.selectionSet) {
 			cursorIndex.set(viewUpdate.state.selection.main.head);
 		}
-	});
 
-	const onFileChangeUpdater = EditorView.updateListener.of((viewUpdate) => {
-		if (viewUpdate.docChanged) {
+		if (!viewUpdate.changes.empty) {
 			dispatch('change', { value: viewUpdate.state.doc.toString() });
 		}
 	});
@@ -259,8 +259,7 @@
 	async function make_extensions({ mode }) {
 		extensions = [
 			basicSetup,
-			cursorPosUpdater,
-			onFileChangeUpdater,
+			watcher,
 			await get_lang_plugin(mode || 'svelte'),
 			autocompletion({ closeOnBlur: false }),
 			EditorState.tabSize.of(2),

@@ -58,8 +58,6 @@ self.addEventListener(
 
 					const result = await bundle({ uid, files });
 
-					console.log(result);
-
 					if (JSON.stringify(result.error) === JSON.stringify(ABORT)) return;
 					if (result && uid === current_id) postMessage(result);
 				});
@@ -344,8 +342,6 @@ async function get_bundle(uid, mode, cache, lookup) {
 								loopGuardTimeout: 100,
 							}),
 					  });
-
-			console.log({ warnings });
 
 			new_cache.set(id, { code, result });
 

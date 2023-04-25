@@ -25,8 +25,6 @@
 	export let injectedJS = '';
 	export let injectedCSS = '';
 
-	$: console.log(status);
-
 	/** @type {HTMLIFrameElement} */
 	let iframe;
 	let pending_imports = 0;
