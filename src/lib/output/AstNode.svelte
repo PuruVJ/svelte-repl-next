@@ -18,7 +18,7 @@
 	$: is_ast_array = Array.isArray(value);
 	$: is_collapsable = value && typeof value === 'object';
 	$: is_markable =
-		value &&
+		is_collapsable &&
 		'start' in value &&
 		'end' in value &&
 		typeof value.start === 'number' &&
@@ -54,8 +54,13 @@
 		if (is_markable) {
 			e.stopPropagation();
 
-			if ('start' in value && 'end' in value)
-				$module_editor?.mark_text({ from: value.start, to: value.end });
+			if (
+				'start' in value &&
+				'end' in value &&
+				typeof value.start === 'number' &&
+				typeof value.end === 'number'
+			)
+				$module_editor?.markText({ from: value.start ?? 0, to: value.end ?? 0 });
 		}
 	}
 
@@ -63,7 +68,7 @@
 	function handle_unmark_text(e) {
 		if (is_markable) {
 			e.stopPropagation();
-			$module_editor?.unmark_text();
+			$module_editor?.unmarkText();
 		}
 	}
 </script>

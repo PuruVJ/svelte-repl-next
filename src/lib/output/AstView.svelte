@@ -1,17 +1,15 @@
 <script>
 	import Message from '../Message.svelte';
-	import { getContext } from 'svelte';
 	import AstNode from './AstNode.svelte';
+	import { cursorIndex } from '../CodeMirror.svelte';
 
 	/** @type {import('svelte/types/compiler/interfaces').Ast} */
 	export let ast;
 	export let autoscroll = true;
 
-	const { cursor_index } = getContext('REPL');
-
 	// $cursor_index may go over the max since ast computation is usually slower.
 	// clamping this helps prevent the collapse view flashing
-	$: max_cursor_index = !ast ? $cursor_index : Math.min($cursor_index, get_ast_max_end(ast));
+	$: max_cursor_index = !ast ? $cursorIndex : Math.min($cursorIndex, get_ast_max_end(ast));
 
 	$: path_nodes = find_deepest_path(max_cursor_index, [ast]) || [];
 

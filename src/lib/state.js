@@ -140,7 +140,7 @@ export const selected_index = writable(-1);
 
 /** @type {import('svelte/store').Readable<import('./types').File | null>} */
 export const selected = derived([files, selected_index], ([$files, $selected_index]) => {
-	return $files[$selected_index] ?? null;
+	return $selected_index !== -1 ? $files?.[$selected_index] ?? null : null;
 });
 
 /** @type {import('svelte/store').Writable<ReplState['bundle']>} */

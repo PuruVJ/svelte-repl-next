@@ -3,6 +3,7 @@
 	import { BROWSER } from 'esm-env';
 	import { createEventDispatcher } from 'svelte';
 	import Bundler from './Bundler';
+	import InputOutputToggle from './InputOutputToggle.svelte';
 	import ComponentSelector from './input/ComponentSelector.svelte';
 	import ModuleEditor from './input/ModuleEditor.svelte';
 	import Output from './output/Output.svelte';
@@ -13,7 +14,6 @@
 		compile_options,
 		files,
 		get_full_filename,
-		handle_select,
 		module_editor,
 		output,
 		rebundle,
@@ -98,7 +98,7 @@
 		}
 	}
 
-	/** @type {ReturnType<typeof createEventDispatcher<{ change: import('./types').File[] }>>} */
+	/** @type {ReturnType<typeof createEventDispatcher<{ change: { files: import('./types').File[] } }>>} */
 	const dispatch = createEventDispatcher();
 
 	$: if ($output && $selected) {
@@ -174,7 +174,13 @@
 		>
 			<section slot="a">
 				<ComponentSelector show_modified={showModified} on:add on:remove />
-				<ModuleEditor errorLoc={sourceErrorLoc} />
+				<ModuleEditor
+					errorLoc={sourceErrorLoc}
+					on:change={() =>
+						dispatch('change', {
+							files: $files,
+						})}
+				/>
 			</section>
 
 			<section slot="b" style="height: 100%;">
@@ -191,9 +197,10 @@
 			</section>
 		</SplitPane>
 	</div>
-	<!-- {#if $selectoggleable}
+
+	{#if $toggleable}
 		<InputOutputToggle bind:checked={show_output} />
-	{/if} -->
+	{/if}
 </div>
 
 <style>

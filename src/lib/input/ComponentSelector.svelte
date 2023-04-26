@@ -87,7 +87,8 @@
 		} else {
 			console.error(`Could not find component! That's... odd`);
 		}
-		handle_select($files[index] ? index : index - 1);
+
+		handle_select(($selected_index = index - 1));
 	}
 
 	/** @param {FocusEvent & { currentTarget: HTMLInputElement }} event */

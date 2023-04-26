@@ -1,5 +1,8 @@
+<script context="module">
+	export const cursorIndex = writable(0);
+</script>
+
 <script>
-	// @ts-check
 	import { autocompletion, closeBrackets } from '@codemirror/autocomplete';
 	import { defaultKeymap, history, historyField, indentWithTab } from '@codemirror/commands';
 	import { bracketMatching, codeFolding, indentUnit } from '@codemirror/language';
@@ -9,7 +12,7 @@
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import Message from './Message.svelte';
-	import { svelte } from './theme';
+	import { svelte as svelteTheme } from './theme';
 
 	/** @type {import('./types').StartOrEnd | null} */
 	export let errorLoc = null;
@@ -24,8 +27,6 @@
 
 	export let readonly = false;
 	export let tab = true;
-
-	export const cursorIndex = writable(0);
 
 	/**
 	 * @param {{ code: string; lang: import('./types').Lang }} options
@@ -60,6 +61,7 @@
 			editor.scrollDOM.scrollLeft = left;
 		}
 	}
+
 	/**
 	 * @param {number} pos
 	 */
@@ -150,13 +152,7 @@
 		});
 	}
 
-	// TODO: This hack exists cuz the onChange event fires on any random thing
-	let prev_editor_value = '';
-
-	/** @type {HTMLDivElement} */
-	let container;
-
-	/** @type {EditorView}*/
+	/** @type {EditorView} */
 	let editor;
 
 	/** @type {number} */
@@ -269,7 +265,7 @@
 			bracketMatching(),
 			codeFolding(),
 			history(),
-			svelte,
+			svelteTheme,
 		];
 
 		extensions.push(EditorState.readOnly.of(readonly));
@@ -277,30 +273,33 @@
 		return (extensions = extensions);
 	}
 
-	async function create_editor() {
-		const state = EditorState.create({
-			doc: code,
-			extensions: [await make_extensions({ mode: lang })],
-		});
+	/**
+	 * @type {import('svelte/action').Action<HTMLDivElement>}
+	 */
+	async function codemirror(node) {
+		(async () => {
+			if (!destroyed) {
+				editor = new EditorView({
+					parent: node,
+					extensions: await make_extensions({ mode: lang }),
+					doc: '',
+					selection: { anchor: 0, head: 0 },
+				});
 
-		editor = new EditorView({
-			state,
-			parent: container,
-		});
-	}
+				fulfil_module_editor_ready();
+			}
+		})();
 
-	onMount(async () => {
-		await create_editor();
-
-		fulfil_module_editor_ready();
-
-		return () => {
-			editor?.destroy();
+		return {
+			destroy: () => {
+				destroyed = true;
+				editor.destroy();
+			},
 		};
-	});
+	}
 </script>
 
-<div class="codemirror-container" bind:this={container}>
+<div class="codemirror-container" use:codemirror>
 	{#if !editor}
 		<pre style="position: absolute; left: 0; top: 0">{code}</pre>
 
@@ -335,10 +334,6 @@
 
 	.codemirror-container :global(.error-line) {
 		background-color: rgba(200, 0, 0, 0.05);
-	}
-
-	.codemirror-container :global(.mark-text) {
-		background-color: var(--sk-selection-color);
 	}
 
 	pre {
