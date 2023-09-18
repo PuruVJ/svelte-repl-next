@@ -1,4 +1,5 @@
 import type { Writable } from 'svelte/store';
+import type { Adapter } from './adapter';
 
 export type InputFile = {
 	path: string;
@@ -12,4 +13,6 @@ export type File = InputFile & {
 
 export type ReplContext = {
 	files: Writable<File[]>;
+	selected_id: Writable<string | null>;
+	adapter: Adapter;
 };

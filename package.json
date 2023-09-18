@@ -64,6 +64,7 @@
 		"@codemirror/autocomplete": "^6.8.1",
 		"@codemirror/commands": "^6.2.4",
 		"@codemirror/lang-css": "^6.2.0",
+		"@codemirror/lang-html": "^6.4.6",
 		"@codemirror/lang-javascript": "^6.1.9",
 		"@codemirror/lang-json": "^6.0.1",
 		"@codemirror/lang-markdown": "^6.2.0",
@@ -73,7 +74,7 @@
 		"@codemirror/view": "^6.14.0",
 		"@jridgewell/sourcemap-codec": "^1.4.15",
 		"@lezer/highlight": "^1.1.6",
-		"@neocodemirror/svelte": "0.0.15",
+		"@neocodemirror/svelte": "0.0.17",
 		"@replit/codemirror-lang-svelte": "^6.0.0",
 		"@rich_harris/svelte-split-pane": "^1.1.1",
 		"@rollup/browser": "^3.25.3",
@@ -86,6 +87,8 @@
 		"estree-walker": "^3.0.3",
 		"marked": "^5.1.0",
 		"resolve.exports": "^2.0.2",
-		"svelte-json-tree": "^2.1.0"
+		"svelte-json-tree": "^2.1.0",
+		"xterm": "^5.2.1",
+		"xterm-addon-fit": "^0.7.0"
 	}
 }

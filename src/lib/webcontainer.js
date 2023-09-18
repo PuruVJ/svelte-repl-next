@@ -36,6 +36,13 @@ export function create_webcontainer_utils({ webcontainer, files }) {
 	return {
 		subscribe,
 
+		/** @param {import('@webcontainer/api').FileSystemTree} files  */
+		async mount(files) {
+			if (!webcontainer) return;
+
+			await webcontainer.mount(files);
+		},
+
 		/**
 		 * Listen to the webcontainer, and run any processes that are queued.
 		 */
@@ -101,7 +108,9 @@ export function create_webcontainer_utils({ webcontainer, files }) {
 				return Promise.resolve(0);
 			}
 
-			const install_process = await webcontainer.spawn('pnpm', ['install'], { output: true });
+			const install_process = await webcontainer.spawn('npm', ['install'], {
+				output: true,
+			});
 
 			install_process.output.pipeTo(
 				new WritableStream({
@@ -136,6 +145,14 @@ export function create_webcontainer_utils({ webcontainer, files }) {
 			);
 
 			await dev_server_process.exit;
+		},
+
+		/**
+		 * @param {string} path
+		 * @param {string} content
+		 */
+		async write_file(path, content) {
+			webcontainer?.fs.writeFile(path, content);
 		},
 	};
 }
